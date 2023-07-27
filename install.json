@@ -1,0 +1,5 @@
+{
+  "packageManager": "python",
+  "packageName": "stop_time_display",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package stop_time_display"
+}

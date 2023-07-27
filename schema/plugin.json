@@ -1,0 +1,16 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "stop-time-display",
+  "description": "stop-time-display settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false,
+  "jupyter.lab.toolbars": {
+    "TopBar": [
+      {
+        "name": "text",
+        "rank": 110
+      }
+    ]
+  }
+}
