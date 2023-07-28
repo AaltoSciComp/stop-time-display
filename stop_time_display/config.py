@@ -1,0 +1,3 @@
+# in seconds
+DEFAULT_TIMEOUT = 3600
+DEFAULT_MAX_AGE = 3600 * 8

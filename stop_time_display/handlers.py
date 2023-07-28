@@ -6,6 +6,8 @@ from jupyter_server.utils import url_path_join
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 import tornado
 
+from .config import DEFAULT_TIMEOUT, DEFAULT_MAX_AGE
+
 
 class PollHandler(APIHandler):
     @tornado.web.authenticated
@@ -18,7 +20,6 @@ class PollHandler(APIHandler):
             }))
         else:
             token = os.environ.get("JUPYTERHUB_API_TOKEN", "")
-            server_name = os.environ.get("JUPYTERHUB_SERVER_NAME", "")
             path = api_url + '/user'
             client = AsyncHTTPClient()
             request = HTTPRequest(
@@ -27,7 +28,12 @@ class PollHandler(APIHandler):
             )
             response = yield client.fetch(request)
             json_obj = json.loads(response.body.decode('utf-8'))
-            self.finish(json_obj | {"stop-time-display:server-name": server_name})
+            extension_data = {
+                "server_name": os.environ.get("JUPYTERHUB_SERVER_NAME", ""),
+                "timeout": os.environ.get("JUPYTERHUB_CULL_TIMEOUT", DEFAULT_TIMEOUT),
+                "max_age": os.environ.get("JUPYTERHUB_CULL_MAX_AGE", DEFAULT_MAX_AGE)
+            }
+            self.finish(json_obj | {"stop-time-display": extension_data})
 
 
 def setup_handlers(web_app):
@@ -35,5 +41,7 @@ def setup_handlers(web_app):
 
     base_url = web_app.settings["base_url"]
     poll_pattern = url_path_join(base_url, "stop-time-display", "poll")
-    handlers = [(poll_pattern, PollHandler)]
+    handlers = [
+        (poll_pattern, PollHandler),
+    ]
     web_app.add_handlers(host_pattern, handlers)
