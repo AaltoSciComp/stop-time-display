@@ -51,13 +51,34 @@ function stopPolling(): void {
   if (interval_id) clearInterval(interval_id);
 }
 
+
 function updateTextElement(textElement: HTMLDivElement, serverInfo: ServerEntry): void {
   const last_activity = new Date(serverInfo['last_activity']);
   const timeout = new Date();
   timeout.setTime(last_activity.getTime() + TIMEOUT*1000);
   const earlier = timeout > MAX_TIME ? MAX_TIME : timeout;
+  const now = new Date();
+  const dateText = earlier.getDate()==now.getDate() ? '' : ` on ${earlier.getDate()}`;
+  let ordinal;
+  switch (dateText.slice(-1)) {
+    case '':
+      ordinal = '';
+      break;
+    case '1':
+      ordinal = 'st';
+      break;
+    case '2':
+      ordinal = 'nd';
+      break;
+    case '3':
+      ordinal = 'rd';
+      break;
+    default:
+      ordinal = 'th';
+  }
   textElement.innerText = "Server will stop at "
-    + earlier.toTimeString().slice(0,5);
+    + earlier.toTimeString().slice(0,5)
+    + dateText + ordinal;
 }
 
 function setupPolling(textElement: HTMLDivElement): void {
